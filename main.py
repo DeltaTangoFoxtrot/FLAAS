@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote_plus
 import time
 import json
 import os.path
@@ -35,6 +35,11 @@ def GetMetadata(getParams):
             description = description[0]
         else:
             description = "Whoopsy Daisy Image"
+    title = unquote_plus(title)
+    image = unquote_plus(image)
+    description = unquote_plus(description)
+    url = unquote_plus(url)
+    portType = unquote_plus(postType)
     return title, image, description, url, postType
 
 class MyServer(BaseHTTPRequestHandler):
@@ -45,12 +50,11 @@ class MyServer(BaseHTTPRequestHandler):
         getParams = parse_qs(urlparse(self.path).query)
         title, image, description, url, postType = GetMetadata(getParams)
         self.wfile.write(bytes("<html><head>", "utf-8"))
-        self.wfile.write(bytes("<meta property='og:title' content='" + title + "'>", "utf-8"))
-        self.wfile.write(bytes("<meta property='og:image' content='" + image + "'>", "utf-8"))
-        self.wfile.write(bytes("<meta property='og:description' content='" + description + "'>", "utf-8"))
-        self.wfile.write(bytes("<meta property='og:url' content='" + url + "'>", "utf-8"))
-        self.wfile.write(bytes("<meta property='og:type' content='" + postType + "'>", "utf-8"))
-        self.wfile.write(bytes("<title>Title goes here.</title>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:title' content='" + title + "' />", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:image' content='" + image + "' />", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:description' content='" + description + "' />", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:url' content='" + url + "' />", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:type' content='" + postType + "' />", "utf-8"))
         self.wfile.write(bytes("</head>", "utf-8"))
         self.wfile.write(bytes("<body><img src='https://i.imgur.com/z5ux7q9.png' alt='You fell for it fool' />", "utf-8"))
         self.wfile.write(bytes("</body></html>", "utf-8"))
