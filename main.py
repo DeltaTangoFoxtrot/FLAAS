@@ -1,8 +1,16 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import json
+import os.path
 
-hostName = "127.0.0.1"
-hostPort = 9000
+hostName = "localhost"
+hostPort = 8080
+
+if os.path.isfile("config.json"):
+    with open("config.json") as f:
+        data = json.load(f)
+        hostName = data.get("hostName", "localhost")
+        hostPort = data.get("hostPort", 8080)
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
