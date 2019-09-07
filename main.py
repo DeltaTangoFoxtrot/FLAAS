@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
 import time
 import json
 import os.path
@@ -12,23 +13,56 @@ if os.path.isfile("config.json"):
         hostName = data.get("hostName", "localhost")
         hostPort = data.get("hostPort", 8080)
 
+def GetMetadata(getParams):
+    title = getParams.get("t", "You Fell For It Fool")
+    image = getParams.get("i", "https://i.imgur.com/z5ux7q9.png")
+    description = getParams.get("d", "Thunder Cross Split Attack")
+    url = ""
+    postType = "Article"
+
+    if isinstance(title, list):
+        if len(title) == 1:
+            title = title[0]
+        else:
+            title = "Whoopsy Daisy Title"
+    if isinstance(image, list):
+        if len(image) == 1:
+            image = image[0]
+        else:
+            image = "Whoopsy Daisy Image"
+    if isinstance(description, list):
+        if len(description) == 1:
+            description = description[0]
+        else:
+            description = "Whoopsy Daisy Image"
+    return title, image, description, url, postType
+
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        self.wfile.write(bytes("<html><head><title>Title goes here.</title></head>", "utf-8"))
-        self.wfile.write(bytes("<body><p>This is a test.</p>", "utf-8"))
-        self.wfile.write(bytes("<p>You accessed path: %s</p>" % self.path, "utf-8"))
+        getParams = parse_qs(urlparse(self.path).query)
+        title, image, description, url, postType = GetMetadata(getParams)
+        self.wfile.write(bytes("<html><head>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:title' content='" + title + "'>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:image' content='" + image + "'>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:description' content='" + description + "'>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:url' content='" + url + "'>", "utf-8"))
+        self.wfile.write(bytes("<meta property='og:type' content='" + postType + "'>", "utf-8"))
+        self.wfile.write(bytes("<title>Title goes here.</title>", "utf-8"))
+        self.wfile.write(bytes("</head>", "utf-8"))
+        self.wfile.write(bytes("<body><img src='https://i.imgur.com/z5ux7q9.png' alt='You fell for it fool' />", "utf-8"))
         self.wfile.write(bytes("</body></html>", "utf-8"))
 
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
+if __name__ == "__main__":
+    myServer = HTTPServer((hostName, hostPort), MyServer)
+    print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
 
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
+    try:
+        myServer.serve_forever()
+    except KeyboardInterrupt:
+        pass
 
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+    myServer.server_close()
+    print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
