@@ -56,7 +56,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes("<meta property='og:url' content='" + url + "' />", "utf-8"))
         self.wfile.write(bytes("<meta property='og:type' content='" + postType + "' />", "utf-8"))
         self.wfile.write(bytes("</head>", "utf-8"))
-        self.wfile.write(bytes("<body><img src='https://i.imgur.com/z5ux7q9.png' alt='You fell for it fool' />", "utf-8"))
+        self.wfile.write(bytes("<body><img src='https://i.imgur.com/z5ux7q9.png' alt='You fell for it fool' style='max-width: 100vw;max-height: 100vh;' />", "utf-8"))
         self.wfile.write(bytes("</body></html>", "utf-8"))
 
 if __name__ == "__main__":
