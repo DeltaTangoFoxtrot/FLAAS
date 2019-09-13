@@ -2,6 +2,7 @@
 Facebook Link - As A Service
 
 Pass OpenGraph metadata via GET parameters
+
 Can be used on Facebook, Reddit, or any site that uses OpenGraph for link metadata
 
 Example - http://heraldoftherepublic.ga/News/Anime/EN/1235234sasd2/Araki-Sensei-Confirms-Part-6-Adaption-For-Spring-2020/?i=https://i.imgur.com/3UvF08p.jpg
