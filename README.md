@@ -8,7 +8,7 @@ Example - http://heraldoftherepublic.ga/News/Anime/EN/1235234sasd2/Araki-Sensei-
 
 How it looks on Reddit - https://www.reddit.com/r/ShitPostCrusaders/comments/d14782/araki_confirms_part_6_stone_ocean_adaption_for/
 
-Link Settings
+```Link Settings
   i = Thumbnail image
   t = Title
   d = Description
@@ -18,3 +18,4 @@ Link Settings
 Setting up
   Rename config_example.json to config.json with server settings
   Run main.py in Python3
+```
