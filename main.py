@@ -23,7 +23,7 @@ def GetMetadata(getParams):
     image = getParams.get("i", "https://i.imgur.com/z5ux7q9.png")
     description = getParams.get("d", "Thunder Cross Split Attack")
     redirect = getParams.get("r", "")
-    url = ""
+    url = getParams.get("u", hostName)
     postType = "Article"
 
     if isinstance(title, list):
@@ -46,6 +46,11 @@ def GetMetadata(getParams):
             redirect = redirect[0]
         else:
             redirect = "Whoopsy Daisy Redirect"
+    if isinstance(url, list):
+        if len(url) == 1:
+            url = url[0]
+        else:
+            url = "Whoopsy Daisy Redirect"
     title = unquote_plus(title)
     image = unquote_plus(image)
     description = unquote_plus(description)

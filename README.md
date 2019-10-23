@@ -15,7 +15,7 @@ Link Settings
   t = Title
   d = Description
   r = Redirect
-  u = URL (currently hardcoded as "")
+  u = URL (defaults to the hostname provided in the config file, "localhost" if none provided)
   p = Post type (currently hardcoded as "Article")
 
 Setting up
