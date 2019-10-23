@@ -13,10 +13,16 @@ if os.path.isfile("config.json"):
         hostName = data.get("hostName", "localhost")
         hostPort = data.get("hostPort", 8080)
 
+def GetRedirectScript(link):
+    if link == "":
+        return ""
+    return "<script type=\"text/javascript\"> window.location.replace(\"" + link + "\")  </script>"
+
 def GetMetadata(getParams):
     title = getParams.get("t", "You Fell For It Fool")
     image = getParams.get("i", "https://i.imgur.com/z5ux7q9.png")
     description = getParams.get("d", "Thunder Cross Split Attack")
+    redirect = getParams.get("r", "")
     url = ""
     postType = "Article"
 
@@ -35,12 +41,17 @@ def GetMetadata(getParams):
             description = description[0]
         else:
             description = "Whoopsy Daisy Image"
+    if isinstance(redirect, list):
+        if len(redirect) == 1:
+            redirect = redirect[0]
+        else:
+            redirect = "Whoopsy Daisy Redirect"
     title = unquote_plus(title)
     image = unquote_plus(image)
     description = unquote_plus(description)
     url = unquote_plus(url)
     portType = unquote_plus(postType)
-    return title, image, description, url, postType
+    return title, image, description, url, postType, redirect
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -48,7 +59,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         getParams = parse_qs(urlparse(self.path).query)
-        title, image, description, url, postType = GetMetadata(getParams)
+        title, image, description, url, postType, redirect = GetMetadata(getParams)
         self.wfile.write(bytes("<html><head>", "utf-8"))
         self.wfile.write(bytes("<meta property='og:title' content='" + title + "' />", "utf-8"))
         self.wfile.write(bytes("<meta property='og:image' content='" + image + "' />", "utf-8"))
@@ -57,6 +68,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes("<meta property='og:type' content='" + postType + "' />", "utf-8"))
         self.wfile.write(bytes("</head>", "utf-8"))
         self.wfile.write(bytes("<body><img src='https://i.imgur.com/z5ux7q9.png' alt='You fell for it fool' style='max-width: 100vw;max-height: 100vh;' />", "utf-8"))
+        self.wfile.write(bytes(GetRedirectScript(redirect), "utf-8"))   
         self.wfile.write(bytes("</body></html>", "utf-8"))
 
 if __name__ == "__main__":

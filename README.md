@@ -14,6 +14,7 @@ Link Settings
   i = Thumbnail image
   t = Title
   d = Description
+  r = Redirect
   u = URL (currently hardcoded as "")
   p = Post type (currently hardcoded as "Article")
 
