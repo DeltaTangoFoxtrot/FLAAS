@@ -59,6 +59,8 @@ def GetMetadata(getParams):
     return title, image, description, url, postType, redirect
 
 class MyServer(BaseHTTPRequestHandler):
+    def do_POST(self):
+        return self.do_GET()
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
