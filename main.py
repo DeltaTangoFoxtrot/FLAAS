@@ -1,8 +1,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
+import threading
 from urllib.parse import urlparse, parse_qs, unquote_plus
 import time
 import json
 import os.path
+import socket
+import ssl
 
 hostName = "localhost"
 hostPort = 8080
@@ -12,6 +16,8 @@ if os.path.isfile("config.json"):
         data = json.load(f)
         hostName = data.get("hostName", "localhost")
         hostPort = data.get("hostPort", 8080)
+        certificate = data.get("certificate",None)
+        key = data.get("key",None)
 
 def GetRedirectScript(link):
     if link == "":
@@ -78,8 +84,13 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(GetRedirectScript(redirect), "utf-8"))   
         self.wfile.write(bytes("</body></html>", "utf-8"))
 
+class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
+    pass
+
 if __name__ == "__main__":
-    myServer = HTTPServer((hostName, hostPort), MyServer)
+    myServer = ThreadingSimpleServer((hostName, hostPort), MyServer)
+    if certificate and key:
+        myServer.socket = ssl.wrap_socket(myServer.socket, key, certificate, server_side=True, ssl_version=ssl.PROTOCOL_TLSv1_2, ca_certs=None, do_handshake_on_connect=True, suppress_ragged_eofs=True, ciphers='ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK')
     print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
 
     try:

@@ -1,4 +1,6 @@
 {
 	"hostName" : "localhost",
-	"hostPort" : 8080
+	"hostPort" : 8080,
+	"certificate" : "/path/to/cert/",
+	"key" : "/path/to/key"
 }
